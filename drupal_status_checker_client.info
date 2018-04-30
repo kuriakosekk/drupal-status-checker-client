@@ -1,0 +1,4 @@
+name = Drupal Status Checker Client
+description = This module check Drupal status and report it to the centalized status dashboard through a secure communication.
+core = 7.x
+package = drupal status monitoring

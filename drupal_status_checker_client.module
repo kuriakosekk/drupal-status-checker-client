@@ -1,0 +1,47 @@
+<?php
+
+/**
+ * @file
+ * custom module for Drupal status checking.
+ */
+
+
+
+/**
+ * Implements hook_menu().
+ */
+function drupal_status_checker_client_menu() {
+  $items = array();
+  $items['drupal-status-checker-tracking'] = array(
+    'title' => 'Drupal status report',
+    'page callback' => 'drupal_status_checker_client_run',
+    'type' => MENU_CALLBACK,
+    'access callback' => TRUE,
+    'weight' => 99,
+  );
+  return $items;
+}
+/**
+*This Function generate the status report and convert it to Jason
+* The Jason string need to encrypt using a key to access the data only in dashboard.
+*/
+
+function drupal_status_checker_client_run(){
+
+  module_load_include('inc', 'update', 'update.compare');
+  $status_array = array();
+  $status_array['current-server-time'] = time();
+  // Tries to get update information from cache and refreshes it when necessary.
+  $available_status = update_get_available(TRUE);
+  //Calculates the current update status of all projects on the site.
+  $status_array['current-status'] = update_calculate_project_data($available_status);
+
+  drupal_add_http_header('Content-Type', 'text/plain');
+  $enc_str = (json_encode($status_array));
+  //echo $enc_str;
+
+  $dec_str = (json_decode($enc_str));
+  print_r($dec_str);
+  exit;
+
+}
